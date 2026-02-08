@@ -3,24 +3,32 @@ import librosa
 import numpy as np
 import matplotlib.pyplot as plt
 
-def display_spectogram(wav_file_dir: Path):
-    waveform, sample_rate = librosa.load(wav_file_dir)
 
-    # Short-time fourier transform
-    stft = librosa.stft(waveform)
+class StaticSpectogram:
+    """
+    Simple class to display a spectogram of pre-processesed audio
+    """
+    def __init__(self, wav_file_dir: Path):
+        self.wav_file_dir = wav_file_dir
 
-    spectogram = librosa.amplitude_to_db(np.abs(stft))
+    def display_spectogram(self):
+        waveform, sample_rate = librosa.load(self.wav_file_dir)
 
-    plt.figure(figsize=(10, 4))
+        # Short-time fourier transform
+        stft = librosa.stft(waveform)
 
-    librosa.display.specshow(spectogram,
-                             sr=sample_rate,
-                             x_axis='time',
-                             y_axis='log')
-    
-    plt.colorbar()
-    plt.title(f"Spectogram for {wav_file_dir}")
+        spectogram = librosa.amplitude_to_db(np.abs(stft))
 
-    plt.tight_layout()
+        plt.figure(figsize=(10, 4))
 
-    plt.show()
+        librosa.display.specshow(spectogram,
+                                sr=sample_rate,
+                                x_axis='time',
+                                y_axis='log')
+        
+        plt.colorbar()
+        plt.title(f"Spectogram for {self.wav_file_dir}")
+
+        plt.tight_layout()
+
+        plt.show()

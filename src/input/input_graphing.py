@@ -3,7 +3,6 @@ import sounddevice as sd
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtCore
 
-# ---------- Config ----------
 SR = 44100
 NFFT = 2048
 UPDATE_S = 0.02
@@ -34,7 +33,6 @@ spec = np.full((BINS, COLUMNS), -120.0, dtype=np.float32)
 def to_db(mags: np.ndarray) -> np.ndarray:
     return 20.0 * np.log10(np.maximum(mags, 1e-10))
 
-# ---------- UI ----------
 app = pg.mkQApp("Live Spectrogram")
 win = pg.GraphicsLayoutWidget(show=True, title="Rolling Spectrogram")
 plot = win.addPlot(title="Rolling Spectrogram (Mic)")
@@ -68,7 +66,6 @@ def update():
     audio, _ = stream.read(BLOCK)
     x = audio[:, 0].astype(np.float32)
 
-    # ---- spectrogram column (as you already do) ----
     x_fft = x
     if len(x_fft) < NFFT:
         x_fft = np.pad(x_fft, (0, NFFT - len(x_fft)))

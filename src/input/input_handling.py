@@ -1,3 +1,4 @@
+# Utility functions for processing microphone inputs
 import numpy as np
 import sounddevice as sd
 
@@ -40,7 +41,6 @@ def spectrum_from_mic(
             mags = np.abs(fft)
             freqs = np.fft.rfftfreq(nfft, d=1 / sample_rate)
 
-            # Hz, amplitude
             yield freqs, mags
 
 if __name__ == "__main__":

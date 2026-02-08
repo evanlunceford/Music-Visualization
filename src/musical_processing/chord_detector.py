@@ -1,5 +1,4 @@
 import time
-from itsdangerous import NoneAlgorithm
 import numpy as np
 import librosa
 
@@ -15,7 +14,8 @@ class ChordDetector:
         chord_window_s: float = 1.5,
         chord_hz: float = 10.0,
         smoothing: int = 2,
-        chord_type: str = "all",   # "maj", "min", "all"
+        # "maj", "min", "all"
+        chord_type: str = "all",
         silence_thresh: float = 0.01,
     ):
         self.sr = int(sr)
@@ -94,6 +94,13 @@ class ChordDetector:
         last_key_print_t = 0.0
 
         def callback(indata, frames, time_info, status):
+            """
+            Used in both chord_detector and rhythm detector
+            to pass new data into a queue if status is false
+
+            Frames and time_info are required for the sd.InputStream
+            callback method
+            """
             if status:
                 pass
             q.put(indata[:, 0].copy())

@@ -1,2 +1,4 @@
 *.wav
 ./music_samples
+
+__pycache__/

@@ -2,3 +2,5 @@
 ./music_samples
 
 __pycache__/
+
+.claude

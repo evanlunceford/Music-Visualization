@@ -1,7 +1,7 @@
 from collections import Counter
 import math
 
-from cache.sound_cache import SoundCache
+from music_analysis.cache.sound_cache import SoundCache
 
 class SongStructureAnalyzer:
     """
@@ -68,7 +68,7 @@ class SongStructureAnalyzer:
         bpms = [e["bpm"] for e in bin_entries if e["bpm"] and e["bpm"] > 0]
 
         chord_counts = Counter(chords)
-        # Finding the dominate (or mode for the snobby music theorists) for this bin
+        # Finding the dominate (or mode for the snobby music theorists) chord for this bin
         dominant = chord_counts.most_common(1)[0][0] if chord_counts else "none"
 
         # Calculating chord change rate within the bin

@@ -1,11 +1,9 @@
-from graphs.live_spectogram import LiveSpectrogram
-from graphs.static_spectogram import StaticSpectogram
-from musical_processing.chord_detector import ChordDetector
-from musical_processing.rhythm_detector import RhythmDetector
-from musical_processing.static.static_rhythm_detector import StaticRhythmDetector
+from music_analysis.cache.sound_cache import SoundCache
+from music_analysis.graphs.live_spectogram import LiveSpectrogram
+from music_analysis.song_structure.song_structure_analyzer import SongStructureAnalyzer
+from sound_processing.input_detection.chord_detector import ChordDetector
+from sound_processing.input_detection.rhythm_detector import RhythmDetector
 
-# Switch to a wav file you have downloaded
-TEST_AUDIO_DIR = "./music_samples/About-You-1975.wav"
 
 
 if __name__ == "__main__":
@@ -15,14 +13,14 @@ if __name__ == "__main__":
     rhythm_detector = RhythmDetector()
 
 
+    # I still need to add the code to connect the detectors to the sound cache
+    sound_cache = SoundCache()
+    sound_structure_analyzer = SongStructureAnalyzer()
+
+
     # To see list of devices, run print(sd.query_devices())
 
     # LIVE TEST FUNCTIONS
     # chord_detector.live_chords()
     # live_spectogram.run()
     # rhythm_detector.listen_bpm()
-
-
-    # Static objects
-    static_rhythm_detector = StaticRhythmDetector(TEST_AUDIO_DIR)
-    static_spectogram = StaticSpectogram(TEST_AUDIO_DIR)

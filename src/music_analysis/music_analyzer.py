@@ -20,12 +20,13 @@ class MusicAnalyzer:
         cache: SoundCache,
         sample_rate: int = 44100,
         block_s: float = 0.02,
+        device: int | None = None,
     ):
         self.cache = cache
         self.sr = sample_rate
         self.block_s = block_s
 
-        self.audio_stream = AudioStream(sr=sample_rate, block_s=block_s)
+        self.audio_stream = AudioStream(sr=sample_rate, block_s=block_s, device=device)
 
         # Init detectors because they are exclusively used in this object
         self.chord_detector = ChordDetector(sr=sample_rate, update_s=block_s)

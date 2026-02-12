@@ -1,7 +1,5 @@
 import time
-import queue
 import numpy as np
-import sounddevice as sd
 import librosa
 
 
@@ -103,36 +101,18 @@ class RhythmDetector:
 
         return float(np.median(self._bpm_hist))
 
-    # Main BPM detection function
-    def listen_bpm(self, max_seconds: float = 999):
+    def listen_bpm(self, max_seconds: float = 999, device: int | None = None):
+        from music_analysis.utils.audio_stream import AudioStream
 
         start_time = time.time()
 
-        q = queue.Queue()
-
-        def callback(indata, frames, time_info, status):
-            """
-            Used in both chord_detector and rhythm detector
-            to pass new data into a queue if status is false
-
-            Frames and time_info are required for the sd.InputStream
-            callback method
-            """
-            if status:
-                pass
-            q.put(indata[:, 0].copy())
-
         print("Listening for BPM... (Ctrl+C to stop)")
-        with sd.InputStream(
-            channels=1,
-            samplerate=self.sr,
-            blocksize=self.blocksize,
-            dtype="float32",
-            callback=callback,
-        ):
+        with AudioStream(sr=self.sr, block_s=self.blocksize / self.sr, device=device) as stream:
             last_print = None
             while (time.time() - start_time <= max_seconds):
-                x = q.get()
+                x = stream.get_block(timeout=0.1)
+                if x is None:
+                    continue
                 self.push_audio(x)
                 bpm = self.update_bpm()
                 if bpm is not None:

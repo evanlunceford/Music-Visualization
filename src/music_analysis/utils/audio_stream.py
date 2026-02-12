@@ -13,10 +13,11 @@ class AudioStream:
                 pass
     """
 
-    def __init__(self, sr: int = 44100, block_s: float = 0.02):
+    def __init__(self, sr: int = 44100, block_s: float = 0.02, device: int | None = None):
         self.sr = sr
         self.block_s = block_s
         self.blocksize = max(1, int(round(block_s * sr)))
+        self.device = device
         self._queue = queue.Queue()
         self._stream = None
 
@@ -30,6 +31,7 @@ class AudioStream:
             samplerate=self.sr,
             blocksize=self.blocksize,
             dtype="float32",
+            device=self.device,
             callback=self._callback,
         )
         self._stream.start()

@@ -2,9 +2,6 @@ import time
 import numpy as np
 import librosa
 
-import queue
-import sounddevice as sd
-
 
 class ChordDetector:
     def __init__(
@@ -76,11 +73,10 @@ class ChordDetector:
 
         return None
 
-    def live_chords(self, max_seconds: float = 999):
-        
-        start_time = time.time()
+    def live_chords(self, max_seconds: float = 999, device: int | None = None):
+        from music_analysis.utils.audio_stream import AudioStream
 
-        q = queue.Queue()
+        start_time = time.time()
 
         blocksize = max(1, int(round(self.update_s * self.sr)))
         effective_update_s = blocksize / self.sr
@@ -93,35 +89,16 @@ class ChordDetector:
         last_key = None
         last_key_print_t = 0.0
 
-        def callback(indata, frames, time_info, status):
-            """
-            Used in both chord_detector and rhythm detector
-            to pass new data into a queue if status is false
-
-            Frames and time_info are required for the sd.InputStream
-            callback method
-            """
-            if status:
-                pass
-            q.put(indata[:, 0].copy())
-
         print("Listening... (Ctrl+C to stop)")
-        with sd.InputStream(
-            channels=1,
-            samplerate=self.sr,
-            blocksize=blocksize,
-            dtype="float32",
-            callback=callback,
-        ):
-            
-            # Runs until timeout
+        with AudioStream(sr=self.sr, block_s=self.update_s, device=device) as stream:
             while (time.time() - start_time <= max_seconds):
-                x = q.get()
+                x = stream.get_block(timeout=0.1)
+                if x is None:
+                    continue
                 chord = self.process_block(x)
                 if chord is None or chord == last_chord:
                     continue
-                
-                
+
                 print(chord)
                 last_chord = chord
 
@@ -133,10 +110,10 @@ class ChordDetector:
                 key_energy += vec
 
                 key_name, conf = self.detect_key(key_energy)
-        
+
                 now = time.time()
                 if (key_name != last_key) and (now - last_key_print_t > 0.5):
-                    print(f"→ Key: {key_name}  (conf={conf:.3f})")
+                    print(f"-> Key: {key_name}  (conf={conf:.3f})")
                     last_key = key_name
                     last_key_print_t = now
 
